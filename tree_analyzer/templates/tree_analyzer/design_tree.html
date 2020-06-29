@@ -1,0 +1,22 @@
+{% extends "tree_analyzer/base.html" %}
+
+{% block content %}
+<div id="node_scores">
+    <table>
+        <thead>
+            <tr>
+                <th>Node</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for node, node_score in case_study.node_scores.items %}
+            <tr>
+                <td>{{ node }}</td>
+                <td>{{ node_score }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
