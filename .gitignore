@@ -1,1 +1,2 @@
 tree_analyzer/data/*
+__pycache__/
