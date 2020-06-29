@@ -28,61 +28,32 @@
     
     Vue.component("tree-parameters", {template:`
     <div id="tree-parameters">
-        <table>
-            <thead>
-                <h3>Tree designing parameters</h3>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <label for="calculus_algorithm">Calculus algorithm:</label>
-                        <select name="calculus_algorithm" id="calculus_algorithm">
-                            <option value="simple">Simple</option>
-                            <option value="all_vs_all">All vs All</option>
-                            <option value="simple_wa">Simple (whole annotation)</option>
-                            <option value="all_vs_all_wa">All vs All (whole annotation)</option>
-                            <option value="all_vs_all_means">All vs All (means)</option>
-                            <option value="all_vs_all_means_wa">All vs All (means + whole annotation)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="differentiate_gaps">Differentiate gaps:</label>
-                        <select name="differentiate_gaps" id="differentiate_gaps">
-                            <option value="Y">Yes</option>
-                            <option value="N">No</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="min_evalue">Minimum evalue for feature:</label>
-                        <input type="number" id="evalue" step=any>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <select id="feature-selection" multiple>
-                            <option value="1">1t</option>
-                            <option value="2">2t</option>
-                            <option value="3">3t</option>
-                            <option value="4">4t</option>
-                            <option value="5">5t</option>
-                            <option value="6">6t</option>
-                        </select>
-                        <div class="checkbox" id="features">
-                            <label><input type="checkbox" value="feature1">ACT_SITE</label><br>
-                            <label><input type="checkbox" value="feature2">Feature 2</label><br>
-                            <label><input type="checkbox" value="feature3">Feature 3</label><br>
-                            <label><input type="checkbox" value="feature4">Feature 4</label><br>
-                            <label><input type="checkbox" value="feature5">Feature 5</label><br>
-                            <label><input type="checkbox" value="feature6">Feature 6</label><br>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <h3>Tree computing  parameters</h3>
+        <form>
+            <div class="form-group">
+                <select class="selectpicker" title="Calculus algorithm" data-header="Calculus algorithm" data-style="btn btn-dark dropdown-toggle">
+                    <option>Simple</option>
+                    <option>All vs All</option>
+                    <option>All vs All (Means)</option>
+                    <option>Simple (Whole annotation)</option>
+                    <option>All vs All (Whole annotation)</option>
+                    <option>All vs All (Means + Whole annotation)</option>
+                </select>
+                <select class="selectpicker" title="Differentiate gaps" data-header="Differentiate gaps" data-style="btn btn-dark dropdown-toggle">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="selectpicker" multiple title="Features to analyze" data-header="Features to analyze" data-style="btn btn-dark dropdown-toggle">
+                        <option>Mustard</option>
+                        <option>Ketchup</option>
+                        <option>Barbecue</option>
+                </select>
+                <input type="number" id="evalue" step=any placeholder="Evalue">
+            </div>
+            <button type="submit" class="btn btn-danger">Recalculate</button>
+        </form>
     </div>
     `})
 
