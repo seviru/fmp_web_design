@@ -1,6 +1,10 @@
 {% extends "tree_analyzer/base.html" %}
 
 {% block content %}
+<div id="app">
+    <tree-parameters></tree-parameters>
+</div>
+
 <div id="node_scores">
     <table>
         <thead>
@@ -19,4 +23,42 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    Vue.component("tree-parameters", {template:`
+    <div id="tree-parameters">
+    <h3>Tree computing  parameters</h3>
+        <form>
+            <div class="form-group">
+                <select class="selectpicker" title="Calculus algorithm" data-header="Calculus algorithm" data-style="btn btn-dark dropdown-toggle">
+                    {% for algorithm, info in calculus_algorithms.items %}
+                        <option value=algorithm>{{ info.fancy_name }}</option>
+                    {% endfor %}
+                </select>
+                <select class="selectpicker" title="Differentiate gaps" data-header="Differentiate gaps" data-style="btn btn-dark dropdown-toggle">
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="selectpicker" multiple title="Features to analyze" data-header="Features to analyze" data-style="btn btn-dark dropdown-toggle">
+                        <option>Mustard</option>
+                        <option>Ketchup</option>
+                        <option>Barbecue</option>
+                </select>
+                <input type="number" id="evalue" step=any placeholder="Evalue">
+            </div>
+            <button type="submit" class="btn btn-danger">Recalculate</button>
+        </form>
+    </div>
+    `})
+
+    var app = new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+      data: {
+        message: 'Hello Vue!'
+      }
+    })
+</script>
 {% endblock %}
