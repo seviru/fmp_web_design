@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
@@ -20,7 +21,7 @@ def index(request):
             (cluster, partition) = line.split("\t")
             cluster_dict[cluster] = partition.rstrip()
     template = loader.get_template("tree_analyzer/cluster_list.html")
-    return HttpResponse(template.render({"cluster_list":cluster_dict}, request))
+    return HttpResponse(template.render({"cluster_list":cluster_dict, "calculus_algorithms":config.calculus_algorithms}, request))
 
 def design_tree(request, cluster_number, features="ALL", min_evalue=1e-100, calc_algorithm="simple", differentiate_gaps="Y"):
     cluster_list_file = f"{BASE_DATA_PATH}/cluster_list.txt"
