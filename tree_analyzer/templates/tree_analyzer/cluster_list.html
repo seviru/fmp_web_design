@@ -3,34 +3,86 @@
 {% block content %}
 <div id="app">
     <cluster-list></cluster-list>
+    <tree-parameters></tree-parameters>
 </div>
 
 <script>
-    Vue.component("cluster-list", {template:`
-    <div id="cluster-list">
-        <table>
-            <thead>
-                <tr>
-                    <th>Cluster</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cluster in cluster_list %}
-                    <tr>
-                        <td><a href="{% url 'design_tree' cluster_number=cluster %}">{{ cluster }}</a></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    // <!-- Server-status data for Vue components -->
+    var calculus_algorithms = {{ calculus_algorithms| safe }}
+    // console.log(calculus_algorithms)
+    var csrf_token = '{{ csrf_token }}'
+
+    Vue.component("cluster-list", {
+        delimiters: ['[[', ']]'],      
+        template:`
+            <div id="cluster-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cluster</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cluster in cluster_list %}
+                            <tr>
+                                <td><a href="{% url 'design_tree' cluster_number=cluster %}">{{ cluster }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
     `})
+
+    Vue.component("tree-parameters", {
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return {
+            diffGaps: "Y",
+            algorithm : "simple",
+            calculus_algorithms: calculus_algorithms,
+            gaps: "Y",
+            }
+        },
+        methods: {
+            onAlgChange(event) {
+                this.diffGaps=this.calculus_algorithms[this.algorithm].differentiate_gaps
+                if (this.diffGaps === "N"){
+                    this.gaps = "N"
+                }
+                this.$nextTick(function(){ $('#gaps-list').selectpicker('refresh')})
+            }
+        },
+        template:`
+            <div id="tree-parameters">
+            <h3>Tree computing  parameters</h3>
+                <form>
+                    <div class="form-group">
+                        <select class="selectpicker" v-model="algorithm" v-on:change="onAlgChange($event)" title="Calculus algorithm" data-header="Calculus algorithm" data-style="btn btn-dark dropdown-toggle">
+                            <option v-bind:value="algorithm" v-for="(info, algorithm) in calculus_algorithms">[[ info.fancy_name ]]</option>
+                        </select>
+                        <select class="selectpicker" id="gaps-list" v-model="gaps" v-bind:disabled="this.diffGaps === 'N'" title="Differentiate gaps" data-header="Differentiate gaps" data-style="btn btn-dark dropdown-toggle">
+                            <option value="Y">Yes</option>
+                            <option value="N">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="selectpicker" multiple title="Features to analyze" data-header="Features to analyze" data-style="btn btn-dark dropdown-toggle">
+                                <option value="ALL">All</option>
+                                <option value="ACT_SITE">Active site</option>
+                        </select>
+                        <input type="number" id="evalue" step=any placeholder="Evalue">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Recalculate</button>
+                </form>
+            </div>
+            `
+    })
+
 
     var app = new Vue({
       el: '#app',
       delimiters: ['[[', ']]'],
-      data: {
-        message: 'Hello Vue!'
-      }
     })
+
 </script>
 {% endblock %}
