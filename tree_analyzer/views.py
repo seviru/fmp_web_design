@@ -8,6 +8,7 @@ sys.path.append("/home/biopeqqer/Desktop/fmp_core_functionality/scripts")
 from src import main_class, feature_processing
 from tree_analyzer import config
 import json
+from ete3 import TreeStyle
 
 BASE_DATA_PATH = "/home/biopeqqer/Desktop/fmp_web_design/tree_analyzer/data"
 
@@ -57,6 +58,12 @@ def design_tree(request, cluster_number):
         request.session["case_study"] = case_study
 
     case_study.design_tree()
+    ts = TreeStyle()
+    ts.layout_fn = lambda x: True
+    base64_img, img_map = case_study.processed_tree.render("%%return.PNG", 
+                                                            tree_style=ts,
+                                                            h=2000, w=800)
+    case_study.processed_tree = base64_img.data().decode("utf-8")
 
     template = loader.get_template("tree_analyzer/design_tree.html")
     return HttpResponse(template.render({"case_study":case_study, "cluster":cluster_number, "calculus_algorithms":config.calculus_algorithms, "feature_info":config.feature_info}, request))
