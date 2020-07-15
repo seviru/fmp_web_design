@@ -38,7 +38,7 @@ def design_tree(request, cluster_number):
                                     f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
                                     f"{BASE_DATA_PATH}/partitions/{partition}/tables/{cluster_number}.tsv",
                                     f"{BASE_DATA_PATH}/uniprot_2018_09.json",
-                                    "ACT_SITE", 1e-10, "simple", "Y")
+                                    "ALL", 1e-10, "simple", "Y")
         case_study.all_features = list(case_study.all_features)
         request.session["case_study"] = case_study
     else: # IF METHOD IS POST
