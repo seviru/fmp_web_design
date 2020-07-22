@@ -16,14 +16,19 @@ BASE_DATA_PATH = "/home/biopeqqer/Desktop/fmp_web_design/tree_analyzer/data"
 # Create your views here.
 
 def index(request):
+    context = "empty"
+    template = loader.get_template("tree_analyzer/index.html")
+    return HttpResponse(template.render({"context":context}, request))
+
+def cluster_explorer(request):
     cluster_list_file = f"{BASE_DATA_PATH}/cluster_list.txt"
     cluster_dict = {}
     with open(cluster_list_file, "r") as cluster_list:
         for line in cluster_list:
             (cluster, partition) = line.split("\t")
             cluster_dict[cluster] = partition.rstrip()
-    template = loader.get_template("tree_analyzer/cluster_list.html")
-    return HttpResponse(template.render({"cluster_list":cluster_dict, "calculus_algorithms":config.calculus_algorithms}, request))
+    template = loader.get_template("tree_analyzer/cluster_explorer.html")
+    return HttpResponse(template.render({"cluster_list":cluster_dict}, request))
 
 def design_tree(request, cluster_number):   
 
@@ -34,23 +39,29 @@ def design_tree(request, cluster_number):
                 partition = line.split("\t")[1].rstrip()
 
     if request.method == "GET":
-        case_study = main_class.FeatureStudy(f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
-                                    f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
-                                    f"{BASE_DATA_PATH}/partitions/{partition}/tables/{cluster_number}.tsv",
-                                    f"{BASE_DATA_PATH}/uniprot_2018_09.json",
-                                    "ALL", 1e-10, "simple", "Y")
+        # case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
+        #                             alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
+        #                             node_score_algorithm="simple", differentiate_gap_positions="Y",
+        #                             position_matrix=[177,180,185])
+
+        case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
+                                    alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
+                                    table_path=f"{BASE_DATA_PATH}/partitions/{partition}/tables/{cluster_number}.tsv",
+                                    uniprot_path=f"{BASE_DATA_PATH}/uniprot_2018_09.json",
+                                    annotation_features="ALL", min_evalue=1e-10, 
+                                    node_score_algorithm="simple", differentiate_gap_positions="Y")
         case_study.all_features = list(case_study.all_features)
         request.session["case_study"] = case_study
     else: # IF METHOD IS POST
         case_study = request.session["case_study"]
         form_params = dict(request.POST)
-        if form_params["calc_alg"][0] is not "":
+        if form_params["calc_alg"][0] is not "": # IF PARAMETER HAS BEEN MODIFIED
             case_study.calc_alg = form_params["calc_alg"][0]
         if "features" in form_params:
             case_study.study_features = set(form_params["features"])
         if form_params["evalue"][0] is not "":
             case_study.min_eval = float(form_params["evalue"][0])
-        if (config.calculus_algorithms[case_study.calc_alg]["differentiate_gaps"]) == "N":
+        if (config.calculus_algorithms[case_study.calc_alg]["differentiate_gaps"]) == "N": # TO ENSURE THEY DONT CHANGE GAP PARAMETER IN A NOT ALLOWED ALGOORITHM
             case_study.differentiate_gaps = "N"
         else:
             if "diff_gaps" in form_params and form_params["diff_gaps"][0] is not "":
@@ -67,3 +78,7 @@ def design_tree(request, cluster_number):
 
     template = loader.get_template("tree_analyzer/design_tree.html")
     return HttpResponse(template.render({"case_study":case_study, "cluster":cluster_number, "calculus_algorithms":config.calculus_algorithms, "feature_info":config.feature_info}, request))
+
+def design_custom_tree(request):
+    #Some shit in here
+    return

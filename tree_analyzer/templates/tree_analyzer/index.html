@@ -1,1 +1,7 @@
-<a href="{% url 'design_tree' %}">{{ indexpage }}</a>
+{% extends "tree_analyzer/base.html" %}
+
+{% block content %}
+
+<a href="{% url 'cluster_explorer' %}" class="btn btn-outline-dark">Explore our clusters</a>
+
+{% endblock %}
