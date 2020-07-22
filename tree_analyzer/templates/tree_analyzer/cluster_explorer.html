@@ -1,0 +1,41 @@
+{% extends "tree_analyzer/base.html" %}
+
+{% block content %}
+<div id="app">
+    <cluster-list></cluster-list>
+</div>
+
+<script>
+    // <!-- Server-status data for Vue components -->
+    // console.log(calculus_algorithms)
+    var csrf_token = '{{ csrf_token }}'
+
+    Vue.component("cluster-list", {
+        delimiters: ['[[', ']]'],      
+        template:`
+            <div id="cluster-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cluster</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cluster in cluster_list %}
+                            <tr>
+                                <td><a href="{% url 'design_tree' cluster_number=cluster %}">{{ cluster }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        `
+    })
+
+    var app = new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+    })
+
+</script>
+{% endblock %}
