@@ -24,10 +24,11 @@
 
   <body>
     <div class="sidenav">
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Clients</a>
-      <a href="#">Contact</a>
+      <a href="{% url 'index' %}">Home</a>
+      <a href="{% url 'cluster_explorer' %}">Explore clusters</a>
+      <a href="{% url 'design_custom_tree' %}">Upload own tree</a>
+      <a href="https://github.com/seviru/fmp_core_functionality">GitHub repository</a>
+      <a href="#">PayPal me</a>
     </div>
     <div class="content_container">
       {% block content %}
