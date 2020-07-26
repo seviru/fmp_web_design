@@ -62,7 +62,6 @@ def design_tree(request, cluster_number):
             if "diff_gaps" in form_params and form_params["diff_gaps"][0] is not "":
                 case_study.differentiate_gaps = form_params["diff_gaps"][0]
         request.session["case_study"] = case_study
-
     case_study.design_tree()
     ts = TreeStyle()
     ts.layout_fn = lambda x: True
