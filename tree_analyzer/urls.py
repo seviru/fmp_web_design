@@ -6,5 +6,6 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path("cluster_explorer", views.cluster_explorer, name="cluster_explorer"),
+    path("design_tree=custom", views.design_custom_tree, name="design_custom_tree"),
     path("design_tree=<cluster_number>", views.design_tree, name="design_tree")
 ]

@@ -31,7 +31,6 @@ def cluster_explorer(request):
     return HttpResponse(template.render({"cluster_list":cluster_dict}, request))
 
 def design_tree(request, cluster_number):   
-
     cluster_list_file = f"{BASE_DATA_PATH}/cluster_list.txt"
     with open(cluster_list_file, "r") as cluster_list:
         for line in cluster_list:
@@ -39,11 +38,6 @@ def design_tree(request, cluster_number):
                 partition = line.split("\t")[1].rstrip()
 
     if request.method == "GET":
-        # case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
-        #                             alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
-        #                             node_score_algorithm="simple", differentiate_gap_positions="Y",
-        #                             position_matrix=[177,180,185])
-
         case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
                                     alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
                                     table_path=f"{BASE_DATA_PATH}/partitions/{partition}/tables/{cluster_number}.tsv",
@@ -51,6 +45,7 @@ def design_tree(request, cluster_number):
                                     annotation_features="ALL", min_evalue=1e-10, 
                                     node_score_algorithm="simple", differentiate_gap_positions="Y")
         case_study.all_features = list(case_study.all_features)
+
         request.session["case_study"] = case_study
     else: # IF METHOD IS POST
         case_study = request.session["case_study"]
@@ -80,5 +75,26 @@ def design_tree(request, cluster_number):
     return HttpResponse(template.render({"case_study":case_study, "cluster":cluster_number, "calculus_algorithms":config.calculus_algorithms, "feature_info":config.feature_info}, request))
 
 def design_custom_tree(request):
-    #Some shit in here
-    return
+    if request.method == "GET":
+        pass
+        # Cargar la pagina para que salgan las pijdadas de los archivos:
+    else: # SI EL METODO ES POST PORQUE YA SUBIO LOS ARCHIVOS
+        form_params = dict(request.POST)
+        print(form_params)
+        case_study = main_class.FeatureStudy(tree_path=form_params["tree"][0],
+                                alignment_path=form_params["alignment"][0],
+                                node_score_algorithm=form_params["calc_alg"][0], differentiate_gap_positions=form_params["diff_gaps"][0],
+                                position_matrix=[177,180,185])
+
+        # case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
+        #                         alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
+        #                         node_score_algorithm="simple", differentiate_gap_positions="Y",
+        #                         position_matrix=[177,180,185])
+        with open(case_study.tree_in, "r") as tree:
+            for line in tree:
+                print(line)
+        print(case_study.tree_in)
+
+    context = "potato"
+    template = loader.get_template("tree_analyzer/design_custom_tree.html")
+    return HttpResponse(template.render({"calculus_algorithms":config.calculus_algorithms}, request))
