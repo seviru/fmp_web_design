@@ -1,8 +1,8 @@
 {% extends "tree_analyzer/base.html" %}
 
 {% block content %}
-
-<a href="{% url 'cluster_explorer' %}" class="btn btn-outline-dark">Explore our clusters</a>
-<a href="{% url 'design_custom_tree' %}" class="btn btn-outline-dark">Explore your own tree</a>
-
+<div class="col" align="center">
+    <a href="{% url 'cluster_explorer' %}" class="btn btn-outline-dark">Explore our clusters</a>
+    <a href="{% url 'select_custom_parameters' %}" class="btn btn-outline-dark">Explore your own tree</a>
+</div>
 {% endblock %}
