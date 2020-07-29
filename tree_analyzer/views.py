@@ -5,7 +5,7 @@ from django.template import loader
 import sys
 from django.core.management import call_command
 sys.path.append("/home/biopeqqer/Desktop/fmp_core_functionality/scripts")
-from src import main_class, feature_processing
+from src import main_class, feature_processing, utils
 from tree_analyzer import config
 import json
 from ete3 import TreeStyle
@@ -45,54 +45,53 @@ def design_tree(request, cluster_number):
                                     annotation_features="ALL", min_evalue=1e-10, 
                                     node_score_algorithm="simple", differentiate_gap_positions="Y")
         case_study.all_features = list(case_study.all_features)
-
         request.session["case_study"] = case_study
+
     else: # IF METHOD IS POST
         case_study = request.session["case_study"]
-        form_params = dict(request.POST)
-        if form_params["calc_alg"][0] is not "": # IF PARAMETER HAS BEEN MODIFIED
-            case_study.calc_alg = form_params["calc_alg"][0]
-        if "features" in form_params:
-            case_study.study_features = set(form_params["features"])
-        if form_params["evalue"][0] is not "":
-            case_study.min_eval = float(form_params["evalue"][0])
-        if (config.calculus_algorithms[case_study.calc_alg]["differentiate_gaps"]) == "N": # TO ENSURE THEY DONT CHANGE GAP PARAMETER IN A NOT ALLOWED ALGOORITHM
-            case_study.differentiate_gaps = "N"
-        else:
-            if "diff_gaps" in form_params and form_params["diff_gaps"][0] is not "":
-                case_study.differentiate_gaps = form_params["diff_gaps"][0]
+        update_params = dict(request.POST)
+        case_study.update_features(update_params)
         request.session["case_study"] = case_study
+        
     case_study.design_tree()
     ts = TreeStyle()
     ts.layout_fn = lambda x: True
     base64_img, img_map = case_study.processed_tree.render("%%return.PNG", 
-                                                            tree_style=ts,
-                                                            h=2000, w=800)
+                                                            tree_style=ts)
     case_study.processed_tree = base64_img.data().decode("utf-8")
 
     template = loader.get_template("tree_analyzer/design_tree.html")
     return HttpResponse(template.render({"case_study":case_study, "cluster":cluster_number, "calculus_algorithms":config.calculus_algorithms, "feature_info":config.feature_info}, request))
 
-def design_custom_tree(request):
-    if request.method == "GET":
-        pass
-        # Cargar la pagina para que salgan las pijdadas de los archivos:
-    else: # SI EL METODO ES POST PORQUE YA SUBIO LOS ARCHIVOS
-        form_params = dict(request.POST)
-        print(form_params)
-        case_study = main_class.FeatureStudy(tree_path=form_params["tree"][0],
-                                alignment_path=form_params["alignment"][0],
-                                node_score_algorithm=form_params["calc_alg"][0], differentiate_gap_positions=form_params["diff_gaps"][0],
-                                position_matrix=[177,180,185])
 
-        # case_study = main_class.FeatureStudy(tree_path=f"{BASE_DATA_PATH}/partitions/{partition}/trees/{cluster_number}.tree",
-        #                         alignment_path=f"{BASE_DATA_PATH}/partitions/{partition}/alignments/{cluster_number}.fas.alg",
-        #                         node_score_algorithm="simple", differentiate_gap_positions="Y",
-        #                         position_matrix=[177,180,185])
-        with open(case_study.tree_in, "r") as tree:
-            for line in tree:
-                print(line)
-        print(case_study.tree_in)
+def select_custom_parameters(request):
+
+    return
+def design_custom_tree(request):
+    # if request.method == "GET":
+    #     pass
+    #     # Cargar la pagina para que salgan las pijdadas de los archivos:
+    # else: # SI EL METODO ES POST PORQUE YA SUBIO LOS ARCHIVOS
+    form_params = dict(request.POST)
+    form_files = dict(request.FILES)
+    tree_file = form_files["tree"][0]
+    alignment_file = form_files["alignment"][0]
+    
+    case_study = main_class.FeatureStudy(tree_path=tree_file,
+                            alignment_path=alignment_file,
+                            node_score_algorithm="simple", differentiate_gap_positions="Y",
+                            position_matrix=[20,40,60])
+    
+    case_study.tree_in = utils.bytefile_to_stringfile(tree_file)
+    case_study.align_in = utils.bytefile_to_stringfile(alignment_file)
+
+
+        # for line in treefile:
+        #     print(line)
+        # # print(case_study.tree_in)
+    case_study.design_tree()
+    print(case_study.node_scores)
+
 
     context = "potato"
     template = loader.get_template("tree_analyzer/design_custom_tree.html")
