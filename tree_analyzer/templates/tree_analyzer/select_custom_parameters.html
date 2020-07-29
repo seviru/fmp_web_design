@@ -1,38 +1,13 @@
 {% extends "tree_analyzer/base.html" %}
 
 {% block content %}
-<div class="row">
-    <div>
-        <img id="tree" class="ete_tree_img img-responsive col" src="data:image/png;base64,{{ custom_case_study.processed_tree }}">   
-    </div>
-    <div id="app" class="col">
-        <custom-tree-parameters></custom-tree-parameters>
-    </div>
-</div>
-
-<div id="node_scores">
-    <table>
-        <thead>
-            <tr>
-                <th>Node</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for node, node_score in custom_case_study.node_scores.items %}
-            <tr>
-                <td>{{ node }}</td>
-                <td>{{ node_score }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<div id="app">
+    <custom-tree-parameters></custom-tree-parameters>
 </div>
 
 <script>
-    // <!-- Server-status data for Vue components -->
-    var calculus_algorithms = {{ calculus_algorithms| safe }}
     var csrf_token = '{{ csrf_token }}'
+    var calculus_algorithms = {{ calculus_algorithms| safe }}
 
     Vue.component("custom-tree-parameters", {
         delimiters: ['[[', ']]'],
@@ -51,18 +26,26 @@
                     this.gaps = "N"
                 }
                 this.$nextTick(function(){ $('#gaps-list').selectpicker('refresh')})
-            }
+            },
         },
         template:`
-        <div id="custom-tree-parameters" class="col-7 border border-dark rounded shadow p-3 mb-5 bg-white rounded">
+        <div id="custom-tree-parameters" class="col-6 ml-3 border border-dark rounded shadow p-3 mb-5 bg-white rounded">
             <div class="row justify-content-center"><h3>Tree computing  parameters</h3></div>
                 <div class="col">
-                    <form action="{% url 'update_custom_tree' %}"  method="POST">
+                    <form action="{% url 'design_custom_tree' %}" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <div class="custom-file mt-1">
+                            <input type="file" class="custom-file-input" id="alignmentFile" name="alignment">
+                            <label class="custom-file-label" for="alignmentFile">Alignment file (FASTA format)</label>
+                        </div>
+                        <div class="custom-file mt-1">
+                            <input type="file" class="custom-file-input" id="treeFile" name="tree">
+                            <label class="custom-file-label" for="treeFile">Tree file (NEWICK format)</label>
+                        </div>
                         <div class="row mt-1 justify-content-center">
                             <select class="selectpicker col" v-model="algorithm" v-on:change="onAlgChange($event)" name="calc_alg" title="Calculus algorithm" data-header="Calculus algorithm" data-style="btn btn-dark dropdown-toggle">
                                 <option v-bind:value="algorithm" v-for="(info, algorithm) in calculus_algorithms">[[ info.fancy_name ]]</option>
-                            </select>
+                            </select>   
                             <select class="selectpicker col" id="gaps-list" v-model="gaps" v-bind:disabled="this.diffGaps === 'N'" name="diff_gaps" title="Differentiate gaps" data-header="Differentiate gaps" data-style="btn btn-dark dropdown-toggle">
                                 <option value="Y">Yes</option>
                                 <option value="N">No</option>
@@ -71,20 +54,21 @@
                         <div class="row mt-1 justify-content-center">
                             <input type="text" class="col-8" id="annotation-positions" name="annotation_positions" placeholder="Annotation positions (comma separated)">
                         </div>
-                        <div class="row mt-1 justify-content-center"><button type="submit" class="btn btn-danger">Recalculate</button></div>
+                        <div class="row mt-1 justify-content-center"><button type="submit" class="btn btn-danger">Calculate</button></div>
                     </form>
                 </div>
-            </div>
         </div>
         `
     })
 
-
     var app = new Vue({
-        el: '#app',
-        delimiters: ['[[', ']]'],
-        data: {
-        }
+      el: '#app',
+      delimiters: ['[[', ']]'],
     })
+
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
 </script>
 {% endblock %}
