@@ -72,16 +72,18 @@ def select_custom_parameters(request):
 def design_custom_tree(request):
     form_params = dict(request.POST)
     form_files = dict(request.FILES)
-    calculus_algorithm = form_params["calc_alg"][0]
-    differentiate_gaps = form_params["diff_gaps"][0]
+    calculus_algorithm = form_params["calculus_algorithm"][0]
+    differentiate_gaps = form_params["differentiate_gaps"][0]
+    annotation_positions = [int(position) for position in list(set(form_params["annotation_positions"][0].split(",")))]
     tree_file = form_files["tree"][0]
     alignment_file = form_files["alignment"][0]
+    
     
     custom_case_study = main_class.FeatureStudy(tree_path=tree_file,
                                                 alignment_path=alignment_file,
                                                 node_score_algorithm=calculus_algorithm, 
                                                 differentiate_gap_positions=differentiate_gaps,
-                                                position_matrix=[20,40,60])
+                                                position_matrix=annotation_positions)
                                          
     
     custom_case_study.tree_in = utils.bytefile_to_stringfile(tree_file)
