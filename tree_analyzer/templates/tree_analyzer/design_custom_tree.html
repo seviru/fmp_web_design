@@ -39,9 +39,9 @@
         data: function () {
             return {
             diffGaps: "Y",
-            algorithm : "simple",
+            algorithm : "",
             calculus_algorithms: calculus_algorithms,
-            gaps: "Y",
+            gaps: "",
             }
         },
         methods: {
@@ -63,9 +63,9 @@
                             <select class="selectpicker col" v-model="algorithm" v-on:change="onAlgChange($event)" name="calculus_algorithm" title="Calculus algorithm" data-header="Calculus algorithm" data-style="btn btn-dark dropdown-toggle">
                                 <option v-bind:value="algorithm" v-for="(info, algorithm) in calculus_algorithms">[[ info.fancy_name ]]</option>
                             </select>
-                            <select class="selectpicker col" id="gaps-list" v-model="gaps" v-bind:disabled="this.diffGaps === 'N'" name="differentiate_gaps" title="Differentiate gaps" data-header="Differentiate gaps" data-style="btn btn-dark dropdown-toggle">
-                                <option value="Y">Yes</option>
-                                <option value="N">No</option>
+                            <select class="selectpicker col" id="gaps-list" v-model="gaps" v-bind:disabled="this.diffGaps === 'N'" name="differentiate_gaps" title="Treat gaps as aminoacids" data-header="Treat gaps as aminoacids" data-style="btn btn-dark dropdown-toggle">
+                                <option value="Y">No</option>
+                                <option value="N">Yes</option>
                             </select>
                         </div>
                         <div class="row mt-1 justify-content-center">
