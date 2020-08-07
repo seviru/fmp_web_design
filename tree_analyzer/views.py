@@ -53,6 +53,7 @@ def design_tree(request, cluster_number):
         case_study = request.session["case_study"]
         update_params = dict(request.POST)
         case_study.update_features(update_params)
+
     case_study.design_tree()
     case_study.processed_tree = case_study.etetree_to_image()
 
