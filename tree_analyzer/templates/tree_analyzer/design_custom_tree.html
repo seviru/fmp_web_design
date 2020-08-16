@@ -32,13 +32,14 @@
 <script>
     // <!-- Server-status data for Vue components -->
     var calculus_algorithms = {{ calculus_algorithms| safe }}
+    var current_algorithm = '{{ case_study.calc_alg| safe }}'
     var csrf_token = '{{ csrf_token }}'
 
     Vue.component("custom-tree-parameters", {
         delimiters: ['[[', ']]'],
         data: function () {
             return {
-            diffGaps: "Y",
+            diffGaps: diffGaps: calculus_algorithms[current_algorithm].differentiate_gaps,
             algorithm : "",
             calculus_algorithms: calculus_algorithms,
             gaps: "",
