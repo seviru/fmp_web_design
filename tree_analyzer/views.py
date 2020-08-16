@@ -56,9 +56,9 @@ def design_tree(request, cluster_number):
 
     case_study.design_tree()
     case_study.processed_tree = case_study.etetree_to_image()
+    case_study.node_haplotype_logos = {node:logo for node, logo in case_study.node_haplotype_logos.items() if logo is not None}
 
     request.session["case_study"] = case_study
-
 
     template = loader.get_template("tree_analyzer/design_tree.html")
     return HttpResponse(template.render({"case_study":case_study, "cluster":cluster_number, "calculus_algorithms":config.calculus_algorithms, "feature_info":config.feature_info}, request))
@@ -74,7 +74,7 @@ def design_custom_tree(request):
     form_files = dict(request.FILES)
     calculus_algorithm = form_params["calculus_algorithm"][0]
     differentiate_gaps = form_params["differentiate_gaps"][0]
-    annotation_positions = [int(position) for position in list(set(form_params["annotation_positions"][0].split(",")))]
+    annotation_positions = sorted([int(position) for position in list(set(form_params["annotation_positions"][0].split(",")))])
     tree_file = form_files["tree"][0]
     alignment_file = form_files["alignment"][0]
     
