@@ -2,36 +2,22 @@
 
 {% block content %}
 <div class="row">
-    <div>
-        <img id="tree" class="ete_tree_img img-responsive col" src="data:image/png;base64,{{ case_study.processed_tree }}">   
-    </div>
     <div id="app" class="col">
-        <tree-parameters></tree-parameters>
+        <div class="row">
+            <img id="tree" class="ete_tree_img img-fluid col" src="data:image/png;base64,{{ case_study.processed_tree }}">
+            <div class="col">
+                <tree-parameters class="col"></tree-parameters>
+            </div>
+        </div>
+        <haplotype-results class="row"></haplotype-results>
     </div>
-</div>
-
-<div id="node_scores">
-    <table>
-        <thead>
-            <tr>
-                <th>Node</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for node, node_score in case_study.node_scores.items %}
-            <tr>
-                <td>{{ node }}</td>
-                <td>{{ node_score }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 </div>
 
 <script>
     // <!-- Server-status data for Vue components -->
     var calculus_algorithms = {{ calculus_algorithms| safe }}
+    var node_scores = {{ case_study.node_scores| safe}}
+    var haplotype_logos = {{ case_study.node_haplotype_logos| safe}}
     var current_algorithm = '{{ case_study.calc_alg| safe }}'
     var all_features = {{ case_study.all_features| safe }}
     var feature_info = {{ feature_info| safe }}
@@ -58,7 +44,7 @@
             }
         },
         template:`
-        <div id="tree-parameters" class="col-7 border border-dark rounded shadow p-3 mb-5 bg-white rounded">
+        <div id="tree-parameters" class="col border border-dark rounded shadow p-3 mb-5 mr-3 bg-white rounded">
             <div class="row justify-content-center"><h3>Tree computing  parameters</h3></div>
                 <div class="col">
                     <form action="{% url 'design_tree' cluster_number=cluster %}"  method="POST">
@@ -82,6 +68,37 @@
                     </form>
                 </div>
             </div>
+        </div>
+        `
+    })
+
+
+    Vue.component("haplotype-results", {
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return {
+                node_scores: node_scores,
+                haplotype_logos : haplotype_logos,
+            }
+        },
+        template:`
+        <div id="haplotype-results" class="row ml-3 mr-3 mb-3">
+            <table class="table table-hover" data-toggle="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" data-field="Node number" data-sortable="true">Node number</th>
+                        <th scope="col" data-field="Node scorer" data-sortable="true">Node score</th>
+                        <th scop="col">Haplotype</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(logo, node) in haplotype_logos">
+                        <th scope="row">[[ node ]]</th>
+                        <td>[[ node_scores[node] ]]</td>
+                        <td><img id="logo" class="img-fluid d-block" v-bind:src="'data:image/png;base64,'+logo"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         `
     })

@@ -57,6 +57,7 @@ def design_tree(request, cluster_number):
     case_study.design_tree()
     case_study.processed_tree = case_study.etetree_to_image()
     case_study.node_haplotype_logos = {node:logo for node, logo in case_study.node_haplotype_logos.items() if logo is not None}
+    case_study.node_haplotype_logos = case_study.logo_to_image()
 
     request.session["case_study"] = case_study
 
@@ -90,6 +91,9 @@ def design_custom_tree(request):
     custom_case_study.align_in = utils.bytefile_to_stringfile(alignment_file)
     custom_case_study.design_tree()
     custom_case_study.processed_tree = custom_case_study.etetree_to_image()
+    custom_case_study.node_haplotype_logos = {node:logo for node, logo in custom_case_study.node_haplotype_logos.items() if logo is not None}
+    custom_case_study.node_haplotype_logos = custom_case_study.logo_to_image()
+
     request.session["custom_case_study"] = custom_case_study
 
     template = loader.get_template("tree_analyzer/design_custom_tree.html")
@@ -102,6 +106,8 @@ def update_custom_tree(request):
     custom_case_study.update_features(update_params)
     custom_case_study.design_tree()
     custom_case_study.processed_tree = custom_case_study.etetree_to_image()
+    custom_case_study.node_haplotype_logos = {node:logo for node, logo in custom_case_study.node_haplotype_logos.items() if logo is not None}
+    custom_case_study.node_haplotype_logos = custom_case_study.logo_to_image()
     request.session["custom_case_study"] = custom_case_study
 
     template = loader.get_template("tree_analyzer/design_custom_tree.html")
