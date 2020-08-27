@@ -47,7 +47,8 @@ def design_tree(request, cluster_number):
                                              annotation_features="ALL", 
                                              min_evalue=1e-10, 
                                              node_score_algorithm="simple", 
-                                             differentiate_gap_positions="Y")
+                                             differentiate_gap_positions="Y",
+                                             compute_logos="Y")
         case_study.all_features = list(case_study.all_features)
     else: # IF METHOD IS POST
         case_study = request.session["case_study"]
@@ -84,7 +85,8 @@ def design_custom_tree(request):
                                                 alignment_path=alignment_file,
                                                 node_score_algorithm=calculus_algorithm, 
                                                 differentiate_gap_positions=differentiate_gaps,
-                                                position_matrix=annotation_positions)
+                                                position_matrix=annotation_positions,
+                                                compute_logos="Y")
                                          
     
     custom_case_study.tree_in = utils.bytefile_to_stringfile(tree_file)
