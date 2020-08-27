@@ -1,8 +1,16 @@
 {% extends "tree_analyzer/base.html" %}
 
 {% block content %}
-<div class="col" align="center">
-    <a href="{% url 'cluster_explorer' %}" class="btn btn-outline-dark">Explore our clusters</a>
-    <a href="{% url 'select_custom_parameters' %}" class="btn btn-outline-dark">Explore your own tree</a>
+{% load static %}
+
+<div class="container">
+    <div class="row">
+        <img class="img mx-auto" src="{% static "tree_analyzer/fish-bone.png" %}" alt="ProvisionalLogo" width="200" height="200"">
+    </div>
+        <p class="text-center mt-4"><i>Phylogenomics Shifts (PhySh): A software phylogenomics framework for identification of potential function shifts in protein families</i></p>
+    <div class="row align-items-center">
+        <a href="{% url 'cluster_explorer' %}" class="col btn btn-outline-primary btn-lg">Explore our clusters</a>
+        <a href="{% url 'select_custom_parameters' %}" class="col btn btn-outline-dark btn-lg">Explore your own tree</a>
+    </div>
 </div>
 {% endblock %}
