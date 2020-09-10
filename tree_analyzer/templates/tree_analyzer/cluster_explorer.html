@@ -2,35 +2,58 @@
 
 {% block content %}
 <div id="app">
+    <feature-search></feature-search>
     <cluster-list></cluster-list>
+
 </div>
 
 <script>
     // <!-- Server-status data for Vue components -->
     // console.log(calculus_algorithms)
     var csrf_token = '{{ csrf_token }}'
+    var cluster_list = {{ cluster_list| safe }}
 
-    Vue.component("cluster-list", {
+    Vue.component("feature-search", {
         delimiters: ['[[', ']]'],      
         template:`
-            <div id="cluster-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Cluster</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cluster in cluster_list %}
-                            <tr>
-                                <td><a href="{% url 'design_tree' cluster_number=cluster %}">{{ cluster }}</a></td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div id="feature-search" class="col ml-3">
+                <form action="{% url 'cluster_explorer' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <input class="col" type="text" id="query" name="query" placeholder="Feature to search:">
+                        <button type="submit" class="col col-lg-3 btn btn-danger">Search some clusters!</button>
+                    </div>
+                </form>
             </div>
         `
     })
+
+
+    Vue.component("cluster-list", {
+        delimiters: ['[[', ']]'],  
+        data: function () {
+            return {
+            cluster_list: cluster_list,
+            }
+        },    
+        template:`
+        <div id="cluster-list" class="col mt-3">
+            <table class="table table-hover" data-toggle="table">
+                <thead class="thead-dark">
+                    <th scope="col" data-field="Cluster number" data-sortable="true">Cluster</th>
+                </thead>
+                <tbody>
+                    {% for id, cluster in cluster_list.items %}
+                        <tr>
+                            <td><a href="{% url 'design_tree' cluster_number=cluster %}">{{ cluster }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        `
+    })
+
 
     var app = new Vue({
       el: '#app',

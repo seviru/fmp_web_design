@@ -4,13 +4,14 @@ from django.http import HttpResponse
 from django.template import loader
 import sys
 from django.core.management import call_command
-sys.path.append("/home/biopeqqer/Desktop/fmp_core_functionality/scripts")
-from src import main_class, feature_processing, utils
+sys.path.append("/home/sebas/physh_dev/src")
+from src import main_class, feature_processing, utils, sphinxapi
 from tree_analyzer import config
 import json
 from ete3 import TreeStyle
+from sphinxapi import *
 
-BASE_DATA_PATH = "/home/biopeqqer/Desktop/fmp_web_design/tree_analyzer/data"
+BASE_DATA_PATH = "/home/sebas/dummydata/data"
 
 
 # Create your views here.
@@ -22,14 +23,31 @@ def index(request):
 
 
 def cluster_explorer(request):
-    cluster_list_file = f"{BASE_DATA_PATH}/cluster_list.txt"
-    cluster_dict = {}
-    with open(cluster_list_file, "r") as cluster_list:
-        for line in cluster_list:
-            (cluster, partition) = line.split("\t")
-            cluster_dict[cluster] = partition.rstrip()
+    cluster_list = {}
+    
+    if request.method == "POST":
+        query = dict(request.POST)["query"][0]
+        client = SphinxClient()
+        MAX_CLUSTERS_LIST = 1000
+        client.SetLimits(0, MAX_CLUSTERS_LIST, max(MAX_CLUSTERS_LIST,1000))
+        host = "localhost"
+        port = 9306
+        client.SetServer(host, port)
+        index = "clusters_idx"
+        res = client.Query(query, index)
+        if not res:
+            sys.stderr.write("res not found :(") 
+        if client.GetLastWarning():
+            sys.stderr.write('WARNING: %s\n' % client.GetLastWarning())
+        if 'matches' in res:
+            nmatch = 0
+            for match in res["matches"]:
+                cluster_list[nmatch] = match["attrs"]["clid"]
+                nmatch += 1
+        cluster_list = utils.sort_dict_byvalue(cluster_list)
+
     template = loader.get_template("tree_analyzer/cluster_explorer.html")
-    return HttpResponse(template.render({"cluster_list":cluster_dict}, request))
+    return HttpResponse(template.render({"cluster_list":cluster_list}, request))
 
 
 def design_tree(request, cluster_number):   

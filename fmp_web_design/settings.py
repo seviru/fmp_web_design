@@ -25,7 +25,7 @@ SECRET_KEY = '9q&=jmye)m6*vpl*dlveda5qq52uba48oj7_=@5u-dobs=n6r5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["metaenzymes.compgenomics.org"]
 
 
 # Application definition

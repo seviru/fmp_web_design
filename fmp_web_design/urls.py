@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('', include('tree_analyzer.urls')),
     path('admin/', admin.site.urls),
     path('tree_analyzer/', include("tree_analyzer.urls"))
 ]
